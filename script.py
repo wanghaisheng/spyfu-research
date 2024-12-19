@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from DrissionPage import Chromium
+from DrissionPage import Chromium,ChromiumOptions
 import os
 import json
 import platform
@@ -78,8 +78,13 @@ def setup_chrome():
             '--disable-software-rasterizer'
         ]
     }
-    
-    return Chromium(chrome_options)
+    co = ChromiumOptions()
+    co.set_browser_path(chrome_path)
+    co.set_argument('--no-sandbox')  # 无沙盒模式
+
+    co.headless()  # 无头模式
+
+    return Chromium(co)
 
 def get_search_volume():
     try:
