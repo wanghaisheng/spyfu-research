@@ -43,7 +43,7 @@ def getahrefsv(keyword, browser):
         tab.ele("@placeholder=Enter keyword").input(keyword)
         
         # Click check button
-        tab.ele("text=Start").click()
+        tab.ele("text:Start").click()
         
         # Get table data
         table = tab.ele('t:table')
