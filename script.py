@@ -3,17 +3,17 @@ from DrissionPage import Chromium,ChromiumOptions
 import os
 import json
 co = ChromiumOptions().headless()
-browser = Chromium(co)
+browser = Chromium()
 
 
-def get_search_volume():
-    load_dotenv()
-    keyword = os.getenv('keyword')
+load_dotenv()
+keyword = os.getenv('keyword')
     
-    # Initialize browser and create tab object
+# Initialize browser and create tab object
     
     # Process keywords
-    keywords = keyword.split(',') if ',' in keyword else [keyword]
+keywords = keyword.split(',') if ',' in keyword else [keyword]
+def get_search_volume():
     
     results = []
     
