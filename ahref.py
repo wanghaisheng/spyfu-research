@@ -21,8 +21,7 @@ def getahrefkd(k,browser):
 
 
 
-def getahrefsv(k):
-    browser = Chromium(co)
+def getahrefsv(k,browser):
 
     url = "https://ahrefs.com/keyword-generator/"
     browser.get(url)
