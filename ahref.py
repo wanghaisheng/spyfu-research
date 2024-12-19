@@ -38,7 +38,7 @@ def getahrefsv(keyword, browser):
         tab = browser.new_tab()
         
         tab.get(url)
-        
+        print('start to do k in ahref',keyword)
         # Input keyword
         tab.ele("@placeholder=Enter keyword").input(keyword)
         
@@ -51,8 +51,10 @@ def getahrefsv(keyword, browser):
         
         results = []
         for row in rows:
-            cols = row.eles('t:td')
+            print('line====',row.texts())
+            cols = row.texts()
             if len(cols) >= 3:  # Ensure we have all needed columns
+                
                 results.append({
                     "keyword": cols[0].text,
                     "kd_level": cols[1].text,
