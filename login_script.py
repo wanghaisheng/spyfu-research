@@ -1,42 +1,51 @@
-import json
-from DrissionPage import ChromiumPage, ChromiumOptions
+from dotenv import load_dotenv
+from DrissionPage import Chromium
 import os
-import requests 
-
-# 从环境变量中获取 账号密码json、企业微信机器人webhook地址
-account = os.environ.get('ACCOUNT')
-accountList = json.loads(account)
-wx_url = os.environ.get('WX_URL')
+import json
 co = ChromiumOptions().headless()
-lst = ["消息通知 by Serv00脚本："]
+browser = Chromium(co)
 
 
-def action(username, password, url):
-    page = ChromiumPage(co)
-    page.get(url)
-    page.wait(5)
-    page.ele('#id_username').input(username)
-    page.ele('#id_password').input(password)
-    page.ele('#submit').click()
-    page.wait(5)
-    t = page.ele('css:#nav-menu-collapse > ul > li:nth-child(1) > p').inner_html
-    su_text = t.split(':')[1] + '---登录成功'
-    print(su_text)
-    lst.append(su_text)
-    page.wait(10)
-    page.close()
+def get_search_volume():
+    load_dotenv()
+    keyword = os.getenv('keyword')
+    
+    # Initialize browser and create tab object
+    
+    # Process keywords
+    keywords = keyword.split(',') if ',' in keyword else [keyword]
+    
+    results = []
+    
+    for k in keywords:
+        # Format URL with the keyword
+        if ' ' in k:
+            k=k.replace(' ','%20')
+        url = f'https://www.spyfu.com/keyword/overview?vwot=aa&query={k}'
+        browser.get(url)
+        browser.change_mode()
+        
+        # Find the monthly volume element
+        ele = browser.ele('.montly-volume')
+        
+        # Create data dictionary for current keyword
+        data = {
+            "keyword": k,
+            "sv": ele.text
+        }
+        results.append(data)
+        print(f'Processing: {data}')
+    
+    # Combine all results into a single JSON
+    final_result = {
+        "keywords_data": results
+    }
+    
+    # Convert to JSON string
+    json_result = json.dumps(final_result, indent=2)
+    return json_result
 
-def send_markdown (wx_url):
-    message = '\n'.join(lst)
-    data = {"msgtype": "markdown", "markdown": {"content": message}}
-    r = requests.post(url=wx_url,data=json.dumps(data))
-    print(r.text)
-    print(r.status_code)
-
-def main():
-    for i in accountList:
-        action(i['username'], i['password'], i['url'])
-    send_markdown(wx_url)
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    result = get_search_volume()
+    print("\nFinal JSON Result:")
+    print(result)
