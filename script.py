@@ -5,7 +5,7 @@ import json
 import platform
 import subprocess
 from pathlib import Path
-
+from ahref import *
 def find_chrome_path():
     """Find Chrome browser path based on operating system"""
     system = platform.system()
@@ -85,24 +85,26 @@ def setup_chrome():
     co.headless()  # 无头模式
 
     return Chromium(co)
+def getk(keyword):
 
-def get_search_volume():
-    try:
-        load_dotenv()
         keyword = os.getenv('keyword')
         if not keyword:
             raise ValueError("No keyword provided in environment variables")
         
         # Initialize browser with custom setup
-        browser = setup_chrome()
-        tab = browser.latest_tab
+
         
         # Process keywords
         keywords = keyword.split(',') if ',' in keyword else [keyword]
-        results = []
         
-        for k in keywords:
+        return keywords
+ def get_search_volume(browser,k):
+           
+            results = []
+
             try:
+                tab = browser.new_tab()
+
                 # Format URL with the keyword
                 url = f'https://www.spyfu.com/keyword/overview?vwot=aa&query={k.strip()}'
                 print(f"Accessing URL: {url}")
@@ -144,14 +146,6 @@ def get_search_volume():
         json_result = json.dumps(final_result, indent=2)
         return json_result
         
-    except Exception as e:
-        error_result = {
-            "error": str(e),
-            "keywords_data": [],
-            "total_keywords": 0,
-            "successful_queries": 0
-        }
-        return json.dumps(error_result, indent=2)
 
 if __name__ == "__main__":
     print("System Information:")
@@ -159,7 +153,13 @@ if __name__ == "__main__":
     print(f"OS Version: {platform.version()}")
     print(f"Machine: {platform.machine()}")
     print("\nStarting search volume retrieval...")
-    
-    result = get_search_volume()
-    print("\nFinal JSON Result:")
-    print(result)
+    browser = setup_chrome()
+    keywords=getk(keyword)
+    for k in keywords:
+
+        result = get_search_volume(browser)
+        print("\nFinal JSON Result:")
+        print(result)
+        ar=getahrefsv(k,browser)
+        print('========')
+        print(ar)
