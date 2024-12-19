@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from DrissionPage import Chromium
+from DrissionPage import Chromium,ChromiumOptions
 import os
 import json
 co = ChromiumOptions().headless()
