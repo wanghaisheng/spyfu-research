@@ -31,10 +31,12 @@ def getahrefkd(keyword, browser):
             "description": str(e)
         }
 
-def getahrefsv(keyword, tab):
+def getahrefsv(keyword, browser):
     """Get search volume and related keywords from Ahrefs"""
     try:
         url = "https://ahrefs.com/keyword-generator/"
+        tab = browser.new_tab()
+        
         tab.get(url)
         
         # Input keyword
