@@ -4,17 +4,19 @@ def getahrefkd(keyword, browser):
     """Get keyword difficulty from Ahrefs"""
     try:
         url = "https://ahrefs.com/keyword-difficulty/"
-        browser.get(url)
+        tab = browser.new_tab()
+        
+        tab.get(url)
         
         # Input keyword
-        browser.ele("@placeholder=Enter keyword").input(keyword)
+        tab.ele("@placeholder=Enter keyword").input(keyword)
         
         # Click check button
-        browser.ele("text=Check keyword").click()
+        tab.ele("text=Check keyword").click()
         
         # Get difficulty score and description
-        kd = browser.ele(".css-16bvajg-chartValue").text
-        kds = browser.ele(".css-1wi5h2-row css-1crciv5 css-6rbp9c").text
+        kd = tab.ele(".css-16bvajg-chartValue").text
+        kds = tab.ele(".css-1wi5h2-row css-1crciv5 css-6rbp9c").text
         
         return {
             "keyword": keyword,
@@ -29,20 +31,20 @@ def getahrefkd(keyword, browser):
             "description": str(e)
         }
 
-def getahrefsv(keyword, browser):
+def getahrefsv(keyword, tab):
     """Get search volume and related keywords from Ahrefs"""
     try:
         url = "https://ahrefs.com/keyword-generator/"
-        browser.get(url)
+        tab.get(url)
         
         # Input keyword
-        browser.ele("@placeholder=Enter keyword").input(keyword)
+        tab.ele("@placeholder=Enter keyword").input(keyword)
         
         # Click check button
-        browser.ele("text=Check keyword").click()
+        tab.ele("text=Check keyword").click()
         
         # Get table data
-        table = browser.ele('t:table')
+        table = tab.ele('t:table')
         rows = table.eles('t:tr')
         
         results = []
@@ -70,26 +72,26 @@ def getahrefsv(keyword, browser):
 # Example usage
 if __name__ == "__main__":
     try:
-        # Initialize browser
+        # Initialize tab
         co = ChromiumOptions()
         co.headless()  # Optional: run in headless mode
-        browser = ChromiumPage(co)
+        tab = ChromiumPage(co)
         
         # Test keyword
         test_keyword = "example"
         
         # Get keyword difficulty
-        kd_result = getahrefkd(test_keyword, browser)
+        kd_result = getahrefkd(test_keyword, tab)
         print("\nKeyword Difficulty Result:")
         print(kd_result)
         
         # Get search volume and related keywords
-        sv_result = getahrefsv(test_keyword, browser)
+        sv_result = getahrefsv(test_keyword, tab)
         print("\nSearch Volume Results:")
         print(sv_result)
         
     except Exception as e:
         print(f"Error in main execution: {str(e)}")
     finally:
-        if 'browser' in locals():
-            browser.quit()
+        if 'tab' in locals():
+            tab.quit()
