@@ -54,7 +54,8 @@ def getpagecount(keyword=None):
     print("sssss")
     counts = tab.ele(".pager").eles("tag:a")[-2].text
     print(counts)
-    return counts
+    
+    return int(counts)
 
 
 def geturls(counts):
@@ -87,6 +88,8 @@ def processurl(url):
 
 
 counts = getpagecount()
+if counts is None:
+    return 
 urls = geturls(counts)
 tasks = []
 getpagecount()
