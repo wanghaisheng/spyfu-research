@@ -41,24 +41,27 @@ def md2json(md):
 	# Modified
 	    print(response["choices"][0]["message"]["content"].strip())
 
-def getpagecount(url):
-  browser = setup_chrome()
-  print('borw',browser)
-  tab=browser.new_tab()
-  url ="https://search.ccgp.gov.cn/bxsearch?searchtype=2&page_index=1&bidSort=0&buyerName=&projectId=&pinMu=0&bidType=7&dbselect=bidx&kw=CT&start_time=2024%3A06%3A25&end_time=2024%3A12%3A24&timeType=5&displayZone=&zoneId=&pppStatus=0&agentName="
+def getpagecount():
+    browser = setup_chrome()
+    print('borw',browser)
+    tab=browser.new_tab()
+    domain ="https://search.ccgp.gov.cn/bxsearch?searchtype=2&page_index=1&bidSort=0&buyerName=&projectId=&pinMu=0&bidType=7&dbselect=bidx&kw=CT&start_time=2024%3A06%3A25&end_time=2024%3A12%3A24&timeType=5&displayZone=&zoneId=&pppStatus=0&agentName="
 
-  tab.get(url)
-  print('sssss')
-  counts=tab.ele('.pager').eles('tag:a')[-2].text
-  print(counts)
-urls=[]
+    tab.get(url)
+    print('sssss')
+    counts=tab.ele('.pager').eles('tag:a')[-2].text
+    print(counts)
+  return counts
+def geturls(counts):    
+    urls=[]
 
-for page in range(1,counts):
-  tab.get(url)
-  results=tab.ele('.vT-srch-result-list-bid').eles('tag:a')
-  for i in results:
-    url=i.attr('href')
-    urls.append(url)
+    for page in range(1,counts):
+        tab.get(url)
+  	results=tab.ele('.vT-srch-result-list-bid').eles('tag:a')
+  	for i in results:
+	    url=i.attr('href')
+	    urls.append(url)
+    return urls
 def processurl(url):
     # tab=browser.new_tab()
     # tab.get(url)
@@ -73,9 +76,10 @@ def processurl(url):
         json.dump(data, file, ensure_ascii=False, indent=2)
         print('save tag json file')
     
-
+counts=getpagecount()
+urls=geturls(counts)
 tasks = []
-    
+getpagecount()
 for url in urls:
     task = threading.Thread(target=processurl, args=(url))
     tasks.append(task)
