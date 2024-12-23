@@ -89,7 +89,7 @@ def processurl(url):
 
 counts = getpagecount()
 if counts is None:
-    return 
+    print('we have not found pages')
 urls = geturls(counts)
 tasks = []
 getpagecount()
