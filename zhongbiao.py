@@ -92,7 +92,7 @@ if counts is None:
     print('we have not found pages')
 urls = geturls(counts)
 tasks = []
-getpagecount()
+
 for url in urls:
     task = threading.Thread(target=processurl, args=(url))
     tasks.append(task)
