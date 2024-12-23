@@ -26,6 +26,8 @@ jobs:
         pip install DataRecorder aiohttp pandas DrissionPage python-dotenv markitdown
 
     - name: Run the Google search parser script
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}    
       run: |
         python zhongbiao.py \
           --url ${{ github.event.inputs.url }}
