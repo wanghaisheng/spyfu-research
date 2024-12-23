@@ -63,8 +63,8 @@ def geturls(counts):
 
     for page in range(1, counts):
         tab = browser.new_tab()
-
-        tab.get(url)
+        domain=f"https://search.ccgp.gov.cn/bxsearch?searchtype=2&page_index={page}&bidSort=0&buyerName=&projectId=&pinMu=0&bidType=7&dbselect=bidx&kw=CT&start_time=2024%3A06%3A25&end_time=2024%3A12%3A24&timeType=5&displayZone=&zoneId=&pppStatus=0&agentName="
+        tab.get(domain)
         results = tab.ele(".vT-srch-result-list-bid").eles("tag:a")
         for i in results:
             url = i.attr("href")
