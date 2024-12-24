@@ -17,7 +17,7 @@ outfile = Recorder(f'./result/{date_today}.csv')
 load_dotenv()
 
 markitdown = MarkItDown()
-concurrency = 1
+concurrency = 5
 browser = setup_chrome()
 
 # File to save URLs
@@ -52,7 +52,14 @@ def load_processed_urls(file):
 
 
 def openai_api_call(api_key, prompt, model="gpt-4o-mini", retries=3, delay=5):
-    url = "https://heisenberg-duckduckgo-66.deno.dev/v1/chat/completions"
+    urls =[
+    "https://heisenberg-duckduckgo-66.deno.dev/v1/chat/completions",
+    "https://heisenberg-duckduckgo-12.deno.dev/v1/chat/completions",
+
+    "https://heisenberg-duckduckgo-38.deno.dev/v1/chat/completions"
+]
+    import random
+    url=random.choice(urls)
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
     data = {"model": model, "messages": [{"role": "user", "content": prompt}]}
 
@@ -70,7 +77,7 @@ def openai_api_call(api_key, prompt, model="gpt-4o-mini", retries=3, delay=5):
             print(f"Retrying in {delay} seconds...")
             time.sleep(delay)
     
-    return {"error": f"Failed after {retries} attempts"}
+    return None
 
 
 def md2json(md, api_key):
@@ -82,8 +89,7 @@ def md2json(md, api_key):
     )
     response = openai_api_call(api_key, prompt)
 
-    if "error" in response:
-        print(f"Error: {response['message']}")
+    if  response is None:
         return None
     else:
         return response["choices"][0]["message"]["content"].strip()
@@ -129,26 +135,35 @@ def get_urls(counts):
 
 
 def process_url(url, api_key):
-    tab = browser.new_tab()
-    # tab.get(url)
-    print('processing',url)
-    tab.get(url,timeout=30,retry=3)
-
-    html = tab.html
-    
-    if html is None or '中标公告' not in html:
-        return 
-
-    md = markitdown.convert_stream(io.StringIO(html)).text_content
-    data = md2json(md, api_key)
-    
-    if data is None:
-        return
-
     filename = url.split("/")[-1].replace(".htm", ".txt")
-    outfile1 = Recorder(f'./result/{filename}')
-    outfile1.add_data(md)
-    outfile1.record()
+    md=None
+    if os.path.exists(f'./result/{filename}'):
+        md=' '.join(open(f'./result/{filename}',encoding='utf-8').readlines())
+    else:
+        tab = browser.new_tab()
+    # tab.get(url)
+        print('processing',url)
+        tab.get(url,timeout=30,retry=3)
+
+        html = tab.html
+    
+        if html is None or '中标公告' not in html:
+            tab.close()
+            return 
+
+        md = markitdown.convert_stream(io.StringIO(html)).text_content
+    
+
+        outfile1 = Recorder(f'./result/{filename}')
+        outfile1.add_data(md)
+        outfile1.record()
+
+    data = md2json(md, api_key)
+
+    if data is None:
+        if tab:
+            tab.close()
+        return
 
     if '```':
         data = data.replace('\n```', '').replace('```csv\n', '')
@@ -156,9 +171,11 @@ def process_url(url, api_key):
         
         for line in data.split('\n'):
             outfile.add_data(line.strip().split(','))
+        save_processed_url(url)  # Save processed URL
+    if tab:
+        tab.close()
 
-    save_processed_url(url)  # Save processed URL
-    time.sleep(3)
+    time.sleep(5)
 
 def main():
     api_key = os.getenv("OPENAI_API_KEY")
