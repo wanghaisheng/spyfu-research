@@ -86,7 +86,7 @@ def main():
         print('No pages found')
         return
 
-    urls = get_urls(counts)
+    urls = get_urls(2)
     tasks = []
 
     for url in urls:
