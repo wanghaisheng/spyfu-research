@@ -111,7 +111,7 @@ def process_url(url, api_key):
     filename = url.split("/")[-1].replace(".htm", ".txt")
     
     outfile1=Recorder(f'./result/{filename}')
-    outfile1.add_data(data)
+    outfile1.add_data(md)
     outfile1.record()
 
     if '```':
@@ -121,7 +121,7 @@ def process_url(url, api_key):
         print('===',data)
         # data = json.loads(data)
         for line in data.split('\n'):
-            outfile.add_data(line.strip())
+            outfile.add_data(line.strip().split(','))
     # filename = url.split("/")[-1].replace(".htm", "")
     # filepath = os.path.join("result", filename + ".csv")
     # with open(filepath, "w", encoding="utf-8") as file:
@@ -131,6 +131,7 @@ def process_url(url, api_key):
 
 def main():
     api_key = os.getenv("OPENAI_API_KEY")
+    api_key='123456'
     if not api_key:
         raise SystemExit("Missing OPENAI_API_KEY environment variable.")
 
